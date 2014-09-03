@@ -1,0 +1,3 @@
+[submodule "CTObject"]
+	path = CTObject
+	url = http://github.com/Qata/CTObject.git
