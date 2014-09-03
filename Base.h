@@ -1,6 +1,7 @@
 #pragma once
-#include <CTObject/CTAllocator.h>
-#include <stdint.h>
+#import <CTObject/CTAllocator.h>
+#import <stdint.h>
+#import <objc/objc.h>
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wobjc-root-class"
