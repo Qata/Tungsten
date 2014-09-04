@@ -127,12 +127,7 @@
 - (uint8_t)respondsToSelector:(SEL)aSelector
 {
     assert(aSelector);
-    Class cls = object_getClass(self);
-    if (class_respondsToSelector(cls, aSelector))
-    {
-        return 1;
-    }
-    return 0;
+    return class_respondsToSelector(object_getClass(self), aSelector);
 }
 
 @end
