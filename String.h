@@ -18,7 +18,6 @@
 
 @interface String : Base
 {
-@public
     CTString * string;
 }
 + (id)stringWithCharacters:(const char *)characters length:(unsigned int)length;
@@ -30,4 +29,13 @@
 - (const char *)UTF8String;
 - (uint8_t)containsString:(String *)string;
 - (uint8_t)isEqualToString:(String *)string;
+- (void)setCharacters:(const char *)characters;
+- (void)appendCharacters:(const char *)characters;
+- (void)appendCharacter:(char)character;
+- (void)prependCharacters:(const char *)characters;
+- (void)prependCharacter:(char)character;
+- (void)removeCharactersFromBeginning:(uint64_t)count;
+- (void)removeCharactersFromEnd:(uint64_t)count;
+- (void)appendString:(String *)string;
+- (void)prependString:(String *)string;
 @end

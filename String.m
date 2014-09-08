@@ -49,6 +49,16 @@
     return self;
 }
 
+- (UInteger)hash
+{
+	UInteger ret = 0;
+	for(UInteger count = 0; count < CTStringLength(string); ++count)
+	{
+		ret += (ret << 5) + CTStringUTF8String(string)[count];
+	}
+	return ret;
+}
+
 - (uint64_t)length
 {
     return CTStringLength(string);
@@ -66,7 +76,7 @@
 
 - (uint8_t)containsString:(String *)str
 {
-    return CTStringContainsString(string, str->string->characters);
+    return CTStringContainsString(string, [str UTF8String]);
 }
 
 - (uint8_t)isEqual:(id)object
@@ -80,7 +90,51 @@
 
 - (uint8_t)isEqualToString:(String *)object
 {
-    return CTStringCompare(string, object->string) == 0;
+    return CTStringCompare2(string, [object UTF8String]) == 0;
+}
+- (void)setCharacters:(const char *)characters
+{
+    CTStringSet(string, characters);
+}
+
+- (void)appendCharacters:(const char *)characters
+{
+    CTStringAppendCharacters(string, characters, CTSTRING_NO_LIMIT);
+}
+
+- (void)appendCharacter:(char)character
+{
+    CTStringAppendCharacter(string, character);
+}
+
+- (void)prependCharacters:(const char *)characters
+{
+    CTStringPrependCharacters(string, characters, CTSTRING_NO_LIMIT);
+}
+
+- (void)prependCharacter:(char)character
+{
+    CTStringPrependCharacter(string, character);
+}
+
+- (void)removeCharactersFromBeginning:(uint64_t)count
+{
+    CTStringRemoveCharactersFromStart(string, count);
+}
+
+- (void)removeCharactersFromEnd:(uint64_t)count
+{
+    CTStringRemoveCharactersFromEnd(string, count);
+}
+
+- (void)appendString:(String *)str
+{
+    CTStringAppendCharacters(string, str->string->characters, CTSTRING_NO_LIMIT);
+}
+
+- (void)prependString:(String *)str
+{
+    CTStringPrependCharacters(string, str->string->characters, CTSTRING_NO_LIMIT);
 }
 
 @end
