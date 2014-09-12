@@ -8,12 +8,22 @@
 
 #import "String.h"
 
-#ifndef __MACH__
+#ifdef __objc_INCLUDE_GNU
 #import <objc/NXConstStr.h>
 @implementation NXConstantString (UTF8String)
 - (const char *)UTF8String
 {
     return [self cString];
+}
+
+- (UInteger)hash
+{
+	UInteger ret = 0;
+	for(UInteger count = 0; count < [self length]; ++count)
+	{
+		ret += (ret << 5) + [self cString][count];
+	}
+	return ret;
 }
 @end
 #endif
@@ -66,12 +76,12 @@
 
 - (const char *)UTF8String
 {
-    return string->characters;
+    return CTStringUTF8String(string);
 }
 
 - (const char *)cString
 {
-    return [self UTF8String];
+    return CTStringUTF8String(string);
 }
 
 - (uint8_t)containsString:(String *)str
@@ -129,12 +139,12 @@
 
 - (void)appendString:(String *)str
 {
-    CTStringAppendCharacters(string, str->string->characters, CTSTRING_NO_LIMIT);
+    CTStringAppendCharacters(string, [str UTF8String], CTSTRING_NO_LIMIT);
 }
 
 - (void)prependString:(String *)str
 {
-    CTStringPrependCharacters(string, str->string->characters, CTSTRING_NO_LIMIT);
+    CTStringPrependCharacters(string, [str UTF8String], CTSTRING_NO_LIMIT);
 }
 
 @end

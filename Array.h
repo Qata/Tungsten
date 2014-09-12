@@ -24,4 +24,5 @@
 - (id)objectAtIndex:(UInteger)index;
 - (id)firstObject;
 - (id)lastObject;
+- (void)map:(SEL)sel;
 @end

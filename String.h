@@ -9,10 +9,11 @@
 #import <CTObject/CTString.h>
 #import "Base.h"
 
-#ifndef __MACH__
+#ifdef __objc_INCLUDE_GNU
 #import <objc/NXConstStr.h>
 @interface NXConstantString (UTF8String)
 - (const char *)UTF8String;
+- (UInteger)hash;
 @end
 #endif
 

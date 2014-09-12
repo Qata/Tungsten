@@ -17,7 +17,7 @@
         pthread_mutex_init(&mutex, NULL);
     }
     return self;
-}
+} 
 
 - (void)dealloc
 {

@@ -48,6 +48,12 @@
 	return self;
 }
 
+- (void)dealloc
+{
+	[self removeAllObjects];
+	[super dealloc];
+}
+
 - (UInteger)hash
 {
 	UInteger ret = 0;
@@ -82,7 +88,7 @@
 
 - (void)addObject:(id)object
 {
-	CTAllocatorReallocate(zone, array, (count + 1) * sizeof(id));
+	array = CTAllocatorReallocate(zone, array, (count + 1) * sizeof(id));
 	[object retain];
 	array[count++] = object;
 }
@@ -96,7 +102,7 @@
 		--count;
 		memmove((array + index), (array + index + 1), count - index);
 	}
-	CTAllocatorReallocate(zone, array, count * sizeof(id));
+	array = CTAllocatorReallocate(zone, array, count * sizeof(id));
 }
 
 - (void)removeAllObjects
@@ -105,8 +111,6 @@
 	{
 		[array[i] release];
 	}
-	CTAllocatorDeallocate(zone, array);
-	array = NULL;
 	count = 0;
 }
 
@@ -118,26 +122,20 @@
 
 - (id)firstObject
 {
-	if (count)
-	{
-		return array[0];
-	}
-	return nil;
+	return count ? array[0] : nil;
 }
 
 - (id)lastObject
 {
-	if (count)
-	{
-		return array[count - 1];
-	}
-	return nil;
+	return count ? array[count - 1] : nil;
 }
 
-- (void)dealloc
+- (void)map:(SEL)sel
 {
-	[self removeAllObjects];
-	[super dealloc];
+	for (UInteger i = 0; i < count; ++ i)
+	{
+		[array[i] performSelector:sel];
+	}
 }
 
 @end
