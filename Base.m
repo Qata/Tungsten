@@ -4,6 +4,7 @@
 #import <assert.h>
 #include <stdio.h>
 #import "Base.h"
+#import "AutoReleasePool.h"
 
 @implementation Base
 
@@ -75,6 +76,12 @@
 - (id)retain
 {
 	++retainCount;
+	return self;
+}
+
+- (id)autorelease
+{
+	[AutoReleasePool addObject:self];
 	return self;
 }
 

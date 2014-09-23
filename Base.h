@@ -38,8 +38,9 @@ enum
 - (UInteger)hash;
 - (void)setZone:(CTAllocator *)zone;
 - (id)retain;
-- (UInteger)retainCount;
+- (id)autorelease;
 - (void)release;
+- (UInteger)retainCount;
 + (uint8_t)isEqual:(id)object;
 - (uint8_t)isEqual:(id)object;
 + (uint8_t)isSubclassOfClass:(Class)class;

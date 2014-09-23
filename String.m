@@ -32,22 +32,22 @@
 
 + (id)stringWithCharacters:(const char *)characters length:(unsigned int)length
 {
-    return [[self alloc] initWithUTF8String:characters];
+    return [[[self alloc] initWithUTF8String:characters] autorelease];
 }
 
 + (id)stringWithCString:(const char*)byteString
 {
-    return [[self alloc] initWithUTF8String:byteString];
+    return [[[self alloc] initWithUTF8String:byteString] autorelease];
 }
 
 + (id)stringWithCString:(const char*)byteString length:(unsigned int)length
 {
-    return [[self alloc] initWithUTF8String:byteString];
+    return [[[self alloc] initWithUTF8String:byteString] autorelease];
 }
 
 + (id)stringWithUTF8String:(const char *)characters
 {
-    return [[self alloc] initWithUTF8String:characters];
+    return [[[self alloc] initWithUTF8String:characters] autorelease];
 }
 
 - (id)initWithUTF8String:(const char *)characters
@@ -61,12 +61,7 @@
 
 - (UInteger)hash
 {
-	UInteger ret = 0;
-	for(UInteger count = 0; count < CTStringLength(string); ++count)
-	{
-		ret += (ret << 5) + CTStringUTF8String(string)[count];
-	}
-	return ret;
+	return CTStringHash(string);
 }
 
 - (uint64_t)length

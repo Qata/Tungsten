@@ -8,11 +8,11 @@
 
 #pragma once
 #import "Base.h"
-#import <pthread.h>
+#import "Array.h"
 
 @interface AutoReleasePool : Base
 {
-	pthread_t thread;
+	Array * objects;
 }
 + (void)addObject:(id)object;
 @end

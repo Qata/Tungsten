@@ -2,3 +2,4 @@
 #import "String.h"
 #import "Lock.h"
 #import "Array.h"
+#import "AutoReleasePool.h"
