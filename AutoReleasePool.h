@@ -15,4 +15,5 @@
 	Array * objects;
 }
 + (void)addObject:(id)object;
+- (void)drain;
 @end

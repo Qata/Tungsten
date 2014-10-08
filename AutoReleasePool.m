@@ -54,7 +54,6 @@ Lock * pool_lock;
 		objects = [Array new];
 		if ([AutoReleasePool indexOfKey:pthread_self()] == CT_NOT_FOUND)
 		{
-			puts("Adding new pool");
 			if (pool_loc >= pool_size)
 			{
 				pool_size = (pool_loc + 1) * 1.3;
@@ -74,16 +73,17 @@ Lock * pool_lock;
 - (void)dealloc
 {
 	[self retain];
-	[[pool_values objectAtIndex:[AutoReleasePool indexOfKey:pthread_self()]] addObject:self];
+	[self retain];
+	[[pool_values objectAtIndex:[AutoReleasePool indexOfKey:pthread_self()]] removeObject:self];
 	[objects map:@selector(release)];
 	[objects release];
 	[super dealloc];
 }
 
-- (void)release
+- (void)drain
 {
 	--retainCount;
-	[super release];
+	[self release];
 }
 
 - (void)addObject:(id)object
