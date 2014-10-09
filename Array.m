@@ -105,6 +105,15 @@
 	array = CTAllocatorReallocate(zone, array, count * sizeof(id));
 }
 
+- (void)removeObjectAtIndex:(UInteger)index
+{
+	assert(index < count);
+	[array[index] release];
+	--count;
+	memmove((array + index), (array + index + 1), count - index);
+	array = CTAllocatorReallocate(zone, array, count * sizeof(id));
+}
+
 - (void)removeAllObjects
 {
 	for (UInteger i = 0; i < count; ++i)

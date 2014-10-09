@@ -20,6 +20,7 @@
 - (id *)contents;
 - (UInteger)indexOfObject:(id)object;
 - (void)removeObject:(id)object;
+- (void)removeObjectAtIndex:(UInteger)index;
 - (void)removeAllObjects;
 - (id)objectAtIndex:(UInteger)index;
 - (id)firstObject;

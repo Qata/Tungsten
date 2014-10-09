@@ -34,7 +34,7 @@ Lock * pool_lock;
 
 + (UInteger)indexOfKey:(pthread_t)key
 {
-	UInteger index = CT_NOT_FOUND;
+	UInteger index = NotFound;
 	for (UInteger i = 0; i < pool_loc; ++i)
 	{
 		if (pthread_equal(pool_keys[i], key))
@@ -46,14 +46,32 @@ Lock * pool_lock;
 	return index;
 }
 
++ (void)removeThreadPool
+{
+	UInteger index = NotFound;
+	if ((index = [self indexOfKey:pthread_self()]) != NotFound)
+	{
+		Array * pools = [pool_values objectAtIndex:[self indexOfKey:pthread_self()]];
+		if (![pools count])
+		{
+			[pool_values removeObject:pools];
+			memmove(pool_keys + index, pool_keys + index + 1, pool_loc - index);
+			--pool_loc;
+		}
+	}
+}
+
 - (id)init
 {
 	if (self = [super init])
 	{
 		[pool_lock lock];
 		objects = [Array new];
-		if ([AutoReleasePool indexOfKey:pthread_self()] == CT_NOT_FOUND)
+		puts("Creating pool");
+		if ([AutoReleasePool indexOfKey:pthread_self()] == NotFound)
 		{
+			puts("Adding thread");
+			printf("%llu\n", [pool_values count]);
 			if (pool_loc >= pool_size)
 			{
 				pool_size = (pool_loc + 1) * 1.3;
@@ -64,6 +82,7 @@ Lock * pool_lock;
 			[[pool_values lastObject] release];
 			++pool_loc;
 		}
+		printf("%p\n", [pool_values objectAtIndex:[AutoReleasePool indexOfKey:pthread_self()]]);
 		[[pool_values objectAtIndex:[AutoReleasePool indexOfKey:pthread_self()]] addObject:self];
 		[pool_lock unlock];
 	}
@@ -74,7 +93,9 @@ Lock * pool_lock;
 {
 	[self retain];
 	[self retain];
-	[[pool_values objectAtIndex:[AutoReleasePool indexOfKey:pthread_self()]] removeObject:self];
+	Array * threadPool = [pool_values objectAtIndex:[AutoReleasePool indexOfKey:pthread_self()]];
+	[threadPool removeObject:self];
+	[AutoReleasePool removeThreadPool];
 	[objects map:@selector(release)];
 	[objects release];
 	[super dealloc];
@@ -93,8 +114,8 @@ Lock * pool_lock;
 
 + (void)addObject:(id)object
 {
-	UInteger index = CT_NOT_FOUND;
-	if ((index = [self indexOfKey:pthread_self()]) != CT_NOT_FOUND)
+	UInteger index = NotFound;
+	if ((index = [self indexOfKey:pthread_self()]) != NotFound)
 	{
 		Array * array = [pool_values objectAtIndex:index];
 		AutoReleasePool * pool = [array objectAtIndex:[array count] - 1];
