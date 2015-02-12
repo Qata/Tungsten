@@ -25,18 +25,18 @@
     [super dealloc];
 }
 
-- (void)lock
+- (int)lock
 {
-    pthread_mutex_lock(&mutex);
+	return pthread_mutex_lock(&mutex);
 }
 
-- (void)unlock
+- (int)unlock
 {
-    pthread_mutex_unlock(&mutex);
+    return pthread_mutex_unlock(&mutex);
 }
 
-- (uint8_t)tryLock
+- (int)tryLock
 {
-    return pthread_mutex_trylock(&mutex) == 0;
+    return pthread_mutex_trylock(&mutex);
 }
 @end

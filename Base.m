@@ -10,7 +10,7 @@
 
 + (id)alloc
 {
-	CTAllocator * zone = CTAllocatorCreate();
+	CTAllocatorRef zone = CTAllocatorCreate();
 	id obj = CTAllocatorAllocate(zone, class_getInstanceSize(self));
 	*(Class *)obj = self;
 	[obj setZone:zone];
@@ -48,14 +48,12 @@
 
 + (UInteger)hash
 {
-	UInteger hash = (UInteger)self;
-	return hash;
+	return (UInteger)self;
 }
 
 - (UInteger)hash
 {
-	UInteger hash = (UInteger)self;
-	return hash;
+	return (UInteger)self;
 }
 
 - (id)init
@@ -68,7 +66,7 @@
 	return [[self alloc] init];
 }
 
-- (void)setZone:(CTAllocator *)alloc
+- (void)setZone:(CTAllocatorRef)alloc
 {
 	zone = alloc;
 }
@@ -112,7 +110,7 @@
     return 0;
 }
 
-- (uint64_t)retainCount
+- (UInteger)retainCount
 {
     return retainCount;
 }

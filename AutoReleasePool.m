@@ -32,12 +32,12 @@ Lock * pool_lock;
 	}
 }
 
-+ (UInteger)indexOfKey:(pthread_t)key
++ (UInteger)indexOfCurrentThread
 {
 	UInteger index = NotFound;
 	for (UInteger i = 0; i < pool_loc; ++i)
 	{
-		if (pthread_equal(pool_keys[i], key))
+		if (pthread_equal(pool_keys[i], pthread_self()))
 		{
 			index = i;
 			break;
@@ -48,16 +48,11 @@ Lock * pool_lock;
 
 + (void)removeThreadPool
 {
-	UInteger index = NotFound;
-	if ((index = [self indexOfKey:pthread_self()]) != NotFound)
+	UInteger index;
+	if ((index = [self indexOfCurrentThread]) != NotFound)
 	{
-		Array * pools = [pool_values objectAtIndex:[self indexOfKey:pthread_self()]];
-		if (![pools count])
-		{
-			[pool_values removeObject:pools];
-			memmove(pool_keys + index, pool_keys + index + 1, pool_loc - index);
-			--pool_loc;
-		}
+		[pool_values removeObjectAtIndex:index];
+		memmove(pool_keys + index, pool_keys + index + 1, (pool_loc-- - index) * sizeof(pthread_t *));
 	}
 }
 
@@ -65,25 +60,21 @@ Lock * pool_lock;
 {
 	if (self = [super init])
 	{
-		[pool_lock lock];
 		objects = [Array new];
-		puts("Creating pool");
-		if ([AutoReleasePool indexOfKey:pthread_self()] == NotFound)
+		[pool_lock lock];
+		if ([AutoReleasePool indexOfCurrentThread] == NotFound)
 		{
-			puts("Adding thread");
-			printf("%llu\n", [pool_values count]);
-			if (pool_loc >= pool_size)
+			if (pool_loc >= pool_size / sizeof(pthread_t *))
 			{
-				pool_size = (pool_loc + 1) * 1.3;
-				pool_keys = CTAllocatorReallocate(CTAllocatorGetDefault(), pool_keys, sizeof(pthread_t) * pool_size);
+				pool_size = (pool_loc + 1) * sizeof(pthread_t *) * 1.3;
+				pool_keys = CTAllocatorReallocate(zone, pool_keys, sizeof(pthread_t *) * pool_size);
 			}
-			pool_keys[pool_loc] = pthread_self();
-			[pool_values addObject:[Array new]];
-			[[pool_values lastObject] release];
-			++pool_loc;
+			pool_keys[pool_loc++] = pthread_self();
+			Array * newPool = [Array new];
+			[pool_values addObject:newPool];
+			[newPool release];
 		}
-		printf("%p\n", [pool_values objectAtIndex:[AutoReleasePool indexOfKey:pthread_self()]]);
-		[[pool_values objectAtIndex:[AutoReleasePool indexOfKey:pthread_self()]] addObject:self];
+		[[pool_values objectAtIndex:[AutoReleasePool indexOfCurrentThread]] addObject:self];
 		[pool_lock unlock];
 	}
 	return self;
@@ -91,20 +82,23 @@ Lock * pool_lock;
 
 - (void)dealloc
 {
-	[self retain];
-	[self retain];
-	Array * threadPool = [pool_values objectAtIndex:[AutoReleasePool indexOfKey:pthread_self()]];
+	retainCount = 2;
+	[pool_lock lock];
+	Array * threadPool = [pool_values objectAtIndex:[AutoReleasePool indexOfCurrentThread]];
 	[threadPool removeObject:self];
-	[AutoReleasePool removeThreadPool];
+	if (![threadPool count])
+	{
+		[AutoReleasePool removeThreadPool];
+	}
 	[objects map:@selector(release)];
 	[objects release];
+	[pool_lock unlock];
 	[super dealloc];
 }
 
 - (void)drain
 {
-	--retainCount;
-	[self release];
+	[self dealloc];
 }
 
 - (void)addObject:(id)object
@@ -114,17 +108,18 @@ Lock * pool_lock;
 
 + (void)addObject:(id)object
 {
+	[pool_lock lock];
 	UInteger index = NotFound;
-	if ((index = [self indexOfKey:pthread_self()]) != NotFound)
+	if ((index = [self indexOfCurrentThread]) != NotFound)
 	{
-		Array * array = [pool_values objectAtIndex:index];
-		AutoReleasePool * pool = [array objectAtIndex:[array count] - 1];
-		[pool addObject:object];
+		//Add the object to the last pool in the stack
+		[[[pool_values objectAtIndex:index] lastObject] addObject:object];
 	}
 	else
 	{
-		fputs("No autoreleasepool present, aborting\n", stderr);
+		fprintf(stderr, "No autoreleasepool present for thread %p, aborting\n", pthread_self());
 		abort();
 	}
+	[pool_lock unlock];
 }
 @end

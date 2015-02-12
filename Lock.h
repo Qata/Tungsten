@@ -13,7 +13,7 @@
 {
     pthread_mutex_t mutex;
 }
-- (void)lock;
-- (void)unlock;
-- (uint8_t)tryLock;
+- (int)lock;
+- (int)unlock;
+- (int)tryLock;
 @end

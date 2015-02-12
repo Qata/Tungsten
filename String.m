@@ -32,17 +32,25 @@
 
 + (id)stringWithCharacters:(const char *)characters length:(unsigned int)length
 {
-    return [[[self alloc] initWithUTF8String:characters] autorelease];
+	if (length)
+	{
+		return [[[self alloc] initWithUTF8String:characters] autorelease];
+	}
+	return [[self new] autorelease];
 }
 
 + (id)stringWithCString:(const char*)byteString
 {
-    return [[[self alloc] initWithUTF8String:byteString] autorelease];
+	return [[[self alloc] initWithUTF8String:byteString] autorelease];
 }
 
-+ (id)stringWithCString:(const char*)byteString length:(unsigned int)length
++ (id)stringWithCString:(const char *)byteString length:(unsigned int)length
 {
-    return [[[self alloc] initWithUTF8String:byteString] autorelease];
+	if (length)
+	{
+		return [[[self alloc] initWithUTF8String:byteString] autorelease];
+	}
+	return [[self new] autorelease];
 }
 
 + (id)stringWithUTF8String:(const char *)characters

@@ -96,13 +96,13 @@
 - (void)removeObject:(id)object
 {
 	UInteger index;
-	while ((index = [self indexOfObject:object]) != NotFound)
+	if ((index = [self indexOfObject:object]) != NotFound)
 	{
 		[array[index] release];
 		--count;
-		memmove((array + index), (array + index + 1), count - index);
+		memmove((array + index), (array + index + 1), (count - index) * sizeof(id));
+		array = CTAllocatorReallocate(zone, array, count * sizeof(id));
 	}
-	array = CTAllocatorReallocate(zone, array, count * sizeof(id));
 }
 
 - (void)removeObjectAtIndex:(UInteger)index
@@ -110,7 +110,7 @@
 	assert(index < count);
 	[array[index] release];
 	--count;
-	memmove((array + index), (array + index + 1), count - index);
+	memmove((array + index), (array + index + 1), (count - index) * sizeof(id));
 	array = CTAllocatorReallocate(zone, array, count * sizeof(id));
 }
 

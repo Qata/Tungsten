@@ -19,7 +19,7 @@
 
 @interface String : Base
 {
-    CTString * string;
+    CTStringRef string;
 }
 + (id)stringWithCharacters:(const char *)characters length:(unsigned int)length;
 + (id)stringWithCString:(const char*)byteString;

@@ -5,26 +5,18 @@
 
 typedef int64_t Integer;
 typedef uint64_t UInteger;
-enum
-{
-	UIntegerMax = UINT64_MAX,
-	IntegerMax = INT64_MAX
-};
 
-enum
-{
-	NotFound = IntegerMax
-};
+#define UIntegerMax UINT64_MAX
+#define IntegerMax INT64_MAX
+#define NotFound IntegerMax
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wobjc-root-class"
 @interface Base
 {
-#pragma clang diagnostic pop
 	Class isa;
 	Integer retainCount;
-	CTAllocator * zone;
+	CTAllocatorRef zone;
 }
+
 + (id)alloc;
 + (id)new;
 + (void)initialize;
@@ -36,7 +28,7 @@ enum
 - (Class)superclass;
 + (UInteger)hash;
 - (UInteger)hash;
-- (void)setZone:(CTAllocator *)zone;
+- (void)setZone:(CTAllocatorRef)zone;
 - (id)retain;
 - (id)autorelease;
 - (void)release;

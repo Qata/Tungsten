@@ -9,5 +9,7 @@
 #import "Base.h"
 
 @interface Dictionary : Base
-
+{
+	void * members;
+}
 @end
