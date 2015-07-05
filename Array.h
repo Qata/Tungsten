@@ -8,15 +8,21 @@
 
 #import "Base.h"
 
+typedef struct {
+	unsigned long state;
+	id *itemsPtr;
+	unsigned long *mutationsPtr;
+	unsigned long extra[5];
+} NSFastEnumerationState;
+
 @interface Array : Base
 {
 	id * array;
-	UInteger count;
+	UInteger _count;
 }
 - (id)initWithObjects:(id)object, ...;
 - (id)initWithObjects:(const id[])objects count:(UInteger)count;
 - (void)addObject:(id)object;
-- (UInteger)count;
 - (id *)contents;
 - (UInteger)indexOfObject:(id)object;
 - (void)removeObject:(id)object;
@@ -26,4 +32,5 @@
 - (id)firstObject;
 - (id)lastObject;
 - (void)map:(SEL)sel;
+@property (nonatomic, assign, readonly) UInteger count;
 @end

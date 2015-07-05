@@ -11,8 +11,11 @@
 #import <stdlib.h>
 #import <string.h>
 #import <assert.h>
+#import <math.h>
 
 @implementation Array
+
+@synthesize count = _count;
 
 - (id)initWithObjects:(id)object, ...
 {
@@ -42,7 +45,7 @@
 				[objects[i] retain];
 				array[i] = objects[i];
 			}
-			count = cnt;
+			_count = cnt;
 		}
 	}
 	return self;
@@ -57,7 +60,7 @@
 - (UInteger)hash
 {
 	UInteger ret = 0;
-	for (UInteger i = 0; i < count; ++i)
+	for (UInteger i = 0; i < self.count; ++i)
 	{
 		ret += [[self objectAtIndex:i] hash];
 	}
@@ -71,12 +74,12 @@
 
 - (UInteger)count
 {
-	return count;
+	return _count;
 }
 
 - (UInteger)indexOfObject:(id)object
 {
-	for (UInteger i = 0; i < count; ++ i)
+	for (UInteger i = 0; i < self.count; ++ i)
 	{
 		if ([array[i] isEqual:object])
 		{
@@ -88,9 +91,9 @@
 
 - (void)addObject:(id)object
 {
-	array = CTAllocatorReallocate(zone, array, (count + 1) * sizeof(id));
+	array = CTAllocatorReallocate(zone, array, (self.count + 1) * sizeof(id));
 	[object retain];
-	array[count++] = object;
+	array[_count++] = object;
 }
 
 - (void)removeObject:(id)object
@@ -99,49 +102,49 @@
 	if ((index = [self indexOfObject:object]) != NotFound)
 	{
 		[array[index] release];
-		--count;
-		memmove((array + index), (array + index + 1), (count - index) * sizeof(id));
-		array = CTAllocatorReallocate(zone, array, count * sizeof(id));
+		--_count;
+		memmove((array + index), (array + index + 1), (self.count - index) * sizeof(id));
+		array = CTAllocatorReallocate(zone, array, self.count * sizeof(id));
 	}
 }
 
 - (void)removeObjectAtIndex:(UInteger)index
 {
-	assert(index < count);
+	assert(index < self.count);
 	[array[index] release];
-	--count;
-	memmove((array + index), (array + index + 1), (count - index) * sizeof(id));
-	array = CTAllocatorReallocate(zone, array, count * sizeof(id));
+	--_count;
+	memmove((array + index), (array + index + 1), (self.count - index) * sizeof(id));
+	array = CTAllocatorReallocate(zone, array, self.count * sizeof(id));
 }
 
 - (void)removeAllObjects
 {
-	for (UInteger i = 0; i < count; ++i)
+	for (UInteger i = 0; i < self.count; ++i)
 	{
 		[array[i] release];
 	}
-	count = 0;
+	_count = 0;
 }
 
 - (id)objectAtIndex:(UInteger)index
 {
-	assert(index < count);
+	assert(index < self.count);
 	return array[index];
 }
 
 - (id)firstObject
 {
-	return count ? array[0] : nil;
+	return self.count ? array[0] : nil;
 }
 
 - (id)lastObject
 {
-	return count ? array[count - 1] : nil;
+	return self.count ? array[self.count - 1] : nil;
 }
 
 - (void)map:(SEL)sel
 {
-	for (UInteger i = 0; i < count; ++ i)
+	for (UInteger i = 0; i < self.count; ++ i)
 	{
 		[array[i] performSelector:sel];
 	}

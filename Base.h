@@ -44,6 +44,8 @@ typedef uint64_t UInteger;
 + (uint8_t)isAncestorOfObject:(id)obj;
 + (uint8_t)respondsToSelector:(SEL)aSelector;
 - (uint8_t)respondsToSelector:(SEL)aSelector;
+- (IMP)methodForSelector:(SEL)aSelector;
++ (IMP)methodForSelector:(SEL)aSelector;
 - (id)performSelector:(SEL)aSelector;
 + (id)performSelector:(SEL)aSelector;
 - (id)performSelector:(SEL)aSelector withObject:(id)obj;

@@ -5,6 +5,7 @@
 #include <stdio.h>
 #import "Base.h"
 #import "AutoReleasePool.h"
+#import <string.h>
 
 @implementation Base
 
@@ -159,75 +160,65 @@
     return aSelector != 0 && class_respondsToSelector([self class], aSelector);
 }
 
-+ (id)performSelector:(SEL)aSelector
++ (IMP)methodForSelector:(SEL)aSelector
 {
-    assert(aSelector);
+	assert(aSelector);
 	if (![self respondsToSelector:aSelector])
 	{
 		[self doesNotRecognizeSelector:aSelector];
 	}
-	return (*method_getImplementation(class_getClassMethod(self, aSelector)))(self, aSelector);
+	return method_getImplementation(class_getClassMethod(self, aSelector));
+}
+
+- (IMP)methodForSelector:(SEL)aSelector
+{
+	assert(aSelector);
+	if (![self respondsToSelector:aSelector])
+	{
+		[self doesNotRecognizeSelector:aSelector];
+	}
+	return class_getMethodImplementation([self class], aSelector);
+}
+
++ (id)performSelector:(SEL)aSelector
+{
+	return (*[self methodForSelector:aSelector])(self, aSelector);
 }
 
 - (id)performSelector:(SEL)aSelector
 {
-	assert(aSelector);
-	if (![self respondsToSelector:aSelector])
-	{
-		[self doesNotRecognizeSelector:aSelector];
-	}
-	return (*class_getMethodImplementation([self class], aSelector))(self, aSelector);
-}
-
-- (id)performSelector:(SEL)aSelector withObject:(id)obj
-{
-	assert(aSelector);
-	if (![self respondsToSelector:aSelector])
-	{
-		[self doesNotRecognizeSelector:aSelector];
-	}
-	return (*class_getMethodImplementation([self class], aSelector))(self, aSelector, obj);
+	return (*[self methodForSelector:aSelector])(self, aSelector);
 }
 
 + (id)performSelector:(SEL)aSelector withObject:(id)obj
 {
-    assert(aSelector);
-	if (![self respondsToSelector:aSelector])
-	{
-		[self doesNotRecognizeSelector:aSelector];
-	}
-	return (*method_getImplementation(class_getClassMethod(self, aSelector)))(self, aSelector, obj);
+	return (*[self methodForSelector:aSelector])(self, aSelector, obj);
 }
 
-- (id)performSelector:(SEL)aSelector withObject:(id)obj1 withObject:(id)obj2
+- (id)performSelector:(SEL)aSelector withObject:(id)obj
 {
-	assert(aSelector);
-	if (![self respondsToSelector:aSelector])
-	{
-		[self doesNotRecognizeSelector:aSelector];
-	}
-	return (*class_getMethodImplementation([self class], aSelector))(self, aSelector, obj1, obj2);
+	return (*[self methodForSelector:aSelector])(self, aSelector, obj);
 }
 
 + (id)performSelector:(SEL)aSelector withObject:(id)obj1 withObject:(id)obj2
 {
-	assert(aSelector);
-	if (![self respondsToSelector:aSelector])
-	{
-		[self doesNotRecognizeSelector:aSelector];
-	}
-	return (*method_getImplementation(class_getClassMethod(self, aSelector)))(self, aSelector, obj1, obj2);
+	return (*[self methodForSelector:aSelector])(self, aSelector, obj1, obj2);
+}
+
+- (id)performSelector:(SEL)aSelector withObject:(id)obj1 withObject:(id)obj2
+{
+	return (*[self methodForSelector:aSelector])(self, aSelector, obj1, obj2);
+}
+
++ (void)doesNotRecognizeSelector:(SEL)sel
+{
+	fprintf(stderr, "-[%s %s]: unrecognized selector sent to class\n", object_getClassName(self), sel_getName(sel));
+	abort();
 }
 
 - (void)doesNotRecognizeSelector:(SEL)sel
 {
     fprintf(stderr, "-[%s %s]: unrecognized selector sent to instance %p\n", object_getClassName(self), sel_getName(sel), self);
-	abort();
-}
-
-+ (void)doesNotRecognizeSelector:(SEL)sel
-{
-    fprintf(stderr, "-[%s %s]: unrecognized selector sent to class\n", object_getClassName(self), sel_getName(sel));
 	abort();
 }
 
