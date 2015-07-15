@@ -1,5 +1,5 @@
 #pragma once
-#import <CTObject/CTAllocator.h>
+#import "CTObject/CTAllocator.h"
 #import <stdint.h>
 #import <objc/objc.h>
 

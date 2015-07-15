@@ -6,7 +6,7 @@
 //  Copyright (c) 2014 DALI Lighting. All rights reserved.
 //
 
-#import <CTObject/CTString.h>
+#import "CTObject/CTString.h"
 #import "Base.h"
 
 #ifdef __objc_INCLUDE_GNU
