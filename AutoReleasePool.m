@@ -66,7 +66,7 @@ Lock * pool_lock;
 		{
 			if (pool_loc >= pool_size / sizeof(pthread_t *))
 			{
-				pool_size = (pool_loc + 1) * sizeof(pthread_t *) * 1.3;
+				pool_size = (pool_loc + 1) * sizeof(pthread_t *) * kArrayGrowthFactor;
 				pool_keys = CTAllocatorReallocate(zone, pool_keys, sizeof(pthread_t *) * pool_size);
 			}
 			pool_keys[pool_loc++] = pthread_self();
@@ -117,7 +117,7 @@ Lock * pool_lock;
 	}
 	else
 	{
-		fprintf(stderr, "No autoreleasepool present for thread %p, aborting\n", pthread_self());
+		fprintf(stderr, "No autoreleasepool present for thread %p, aborting\n", (void *)pthread_self());
 		abort();
 	}
 	[pool_lock unlock];

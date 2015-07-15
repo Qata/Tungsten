@@ -22,6 +22,10 @@
 {
 }
 
++ (void)load
+{
+}
+
 - (void)dealloc
 {
 	CTAllocatorRelease(zone);

@@ -8,13 +8,6 @@
 
 #import "Base.h"
 
-typedef struct {
-	unsigned long state;
-	id *itemsPtr;
-	unsigned long *mutationsPtr;
-	unsigned long extra[5];
-} NSFastEnumerationState;
-
 @interface Array : Base
 {
 	id * array;
