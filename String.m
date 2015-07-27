@@ -1,6 +1,6 @@
 //
 //  String.m
-//  serial_interface
+//  Firestarter
 //
 //  Created by Carlo Tortorella on 29/08/2014.
 //  Copyright (c) 2014 DALI Lighting. All rights reserved.
