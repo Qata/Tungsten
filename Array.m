@@ -150,4 +150,30 @@
 	}
 }
 
+- (void)each:(void(^)(id))block
+{
+	for (UInteger i = 0; i < self.count; ++ i)
+	{
+		block(array[i]);
+	}
+}
+
+- (void)filter:(uint8_t(^)(id object))filter_block each:(void(^)(id object))each_block
+{
+	for (UInteger i = 0; i < self.count; ++ i)
+	{
+		if (filter_block(array[i]))
+		{
+			each_block(array[i]);
+		}
+	}
+}
+
+- (void)filterClass:(Class)class each:(void(^)(id object))each_block
+{
+	[self filter:^uint8_t(id object) {
+		return [object isKindOfClass:class];
+	} each:each_block];
+}
+
 @end

@@ -25,5 +25,8 @@
 - (id)firstObject;
 - (id)lastObject;
 - (void)map:(SEL)sel;
+- (void)each:(void(^)(id object))block;
+- (void)filter:(uint8_t(^)(id object))filter_block each:(void(^)(id object))each_block;
+- (void)filterClass:(Class)class each:(void(^)(id object))each_block;
 @property (nonatomic, assign, readonly) UInteger count;
 @end
