@@ -34,16 +34,14 @@ Lock * pool_lock;
 
 + (UInteger)indexOfCurrentThread
 {
-	UInteger index = NotFound;
-	for (UInteger i = 0; i < pool_loc; ++i)
+	for (UInteger index = 0; index < pool_loc; ++index)
 	{
-		if (pthread_equal(pool_keys[i], pthread_self()))
+		if (pthread_equal(pool_keys[index], pthread_self()))
 		{
-			index = i;
-			break;
+			return index;
 		}
 	}
-	return index;
+	return NotFound;
 }
 
 + (void)removeThreadPool
