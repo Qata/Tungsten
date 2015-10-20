@@ -176,4 +176,28 @@
 	} each:each_block];
 }
 
+- (uint8_t)any:(uint8_t(^)(id object))block
+{
+	for (UInteger i = 0; i < self.count; ++i)
+	{
+		if (block(array[i]))
+		{
+			return 1;
+		}
+	}
+	return 0;
+}
+
+- (uint8_t)all:(uint8_t(^)(id object))block
+{
+	for (UInteger i = 0; i < self.count; ++i)
+	{
+		if (!block(array[i]))
+		{
+			return 0;
+		}
+	}
+	return 1;
+}
+
 @end
